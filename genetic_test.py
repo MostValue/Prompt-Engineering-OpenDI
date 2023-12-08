@@ -11,6 +11,7 @@ def run_LLM(prompt):
         result = "rabbit"
     return result
 
+
 def fitness_funtion(output):
     answer = "dog"
     return int(output == answer) 
