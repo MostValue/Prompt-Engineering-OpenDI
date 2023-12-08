@@ -1,9 +1,7 @@
 # genetic algorithm as shown in their hackathon tutorial example
 
-
 from numpy.random import rand
 from numpy.random import randint
-
 
 # Class genetic algorithm
 class GeneticAlgorithm():
@@ -28,16 +26,18 @@ class GeneticAlgorithm():
         population = [randint(0,  2, length).tolist() for _ in range(n_pop)]
 
         # KEEPING TRACK OF BEST SOLUTION
-        best, best_eval = 0, fitness(population[0])
+        best, best_eval = population[0], fitness(population[0])
 
         # ENUMERATE OVER GENERATIONS
         for gen in range(n_iter):
-
+        
             # evaluate the fitness of all candidates in the population
             scores = [fitness(c) for c in population]
+            print("Generation {} - Best Score: {:.3f}".format(gen, max(scores)))
+
             # check for new best solution
             for i in range(n_pop):
-                if scores[i] < best_eval:
+                if scores[i] > best_eval:
                     best, best_eval = population[i], scores[i]
                     print(f">{0}, new best f({1}) = {2:.3f}".format(gen, population[i], scores[i]))
 
@@ -56,6 +56,7 @@ class GeneticAlgorithm():
                     cls._mutation(c, r_mut)
                     # store for next generation
                     children.append(c)
+
             # replace population
             population = children
         return [best, best_eval]
@@ -78,7 +79,7 @@ class GeneticAlgorithm():
         x1 = randint(len(population))
         for x in randint(0, len(population), k - 1):
             # check if better than 3 random individuals (performing a tournament)
-            if scores[x] < scores[x1]:
+            if scores[x] > scores[x1]:
                 x1 = x
         return population[x1]
 
