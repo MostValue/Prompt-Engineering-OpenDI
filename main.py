@@ -29,6 +29,8 @@ def scoring(instruction, questions) -> score:
         fitness(LLM2(instruction+ question))
     return score
 
+#Extract the answer from the LLM output
+
 
 result = [scoring(instruction, questions) for instruction in instructions]
     
@@ -42,6 +44,7 @@ new_pop.append(best_instructions)
 #MUTATION
 def mutate(instruction):
     #blah
+    # Should have function call to LLM( )  -> new instruction
 def crossover(p1, p2):
     #blah
 
@@ -56,6 +59,9 @@ for i in range(num_crossover):
 
 # Pass new_pop into LLM2
 # Restart genetic algo
+
+
+new_instruction = instruction1.split() + instruction2.split()
 
 
 
