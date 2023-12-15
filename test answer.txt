@@ -1,0 +1,5 @@
+Of course! Here are the calculations to solve the problem without using variables:
+Natalia sold 48 clips in April, so the number of clips she sold in April is 48.
+Therefore, the total number of clips Natalia sold in April and May is:
+48 + 24 = 72
+Final answer: 72 clips.
