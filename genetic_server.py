@@ -1,6 +1,7 @@
 """
 OpenDI HyperCycle Hackathon 2023
 Challenge 3: Genetic Algorithm for Automated Prompt Engineering
+Made by: Quantum Syntax
 """
 import os
 
@@ -14,12 +15,12 @@ from prompt_objective import PromptObjective
 
 PORT = os.environ.get("PORT", 4002)
 
-class GeneticExample(SimpleServer):
-    manifest = {"name": "GeneticExample",
-                "short_name": "gen-example",
+class MathWiz(SimpleServer):
+    manifest = {"name": "MathWiz",
+                "short_name": "MathWiz",
                 "version": "0.1",
-                "license": "MIT",
-                "author": "HyperCycle"
+                "license": "Apache 2.0",
+                "author": "Quantum Syntax"
                 }
 
     def __init__(self):
@@ -30,7 +31,7 @@ class GeneticExample(SimpleServer):
                  "input_query": "",
                  "input_headers": "",
                  "output": {},
-                 "documentation": "Returns the prompt and the score based on the desired output", # REPLACE
+                 "documentation": "Returns the best prompt based on the desired output", 
                  "example_calls": [{
                      "body": {"target_output": "simple, lively, strong"},
                      "method": "POST",
@@ -71,7 +72,7 @@ class GeneticExample(SimpleServer):
 
 def main():
     # example usage:
-    app = GeneticExample()
+    app = MathWiz()
     app.run(uvicorn_kwargs={"port": PORT, "host": "0.0.0.0"})
 
 
