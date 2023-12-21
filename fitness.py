@@ -6,17 +6,15 @@ def check_answer(answer, output):
         raise TypeError("Must be of type str")
     if re.search("\s" + answer +"\s*", output):
         print("answer is correct")
-        return 3
+        return 1
     print("answer is wrong")
-    return -1
+    return 0
 
 
-# finds the logical steps from database answer
 def get_logic(answer):
     return re.findall("<<(.*?)>>", answer)
 
 
-# splits database answer into tokens
 def tokenise_logic(logic):
     tokenised_logic = []
     operators = "+-/*="
@@ -34,29 +32,30 @@ def tokenise_logic(logic):
     return tokenised_logic
 
 
-# checks to see if the database answer is in the line
 def check_logic_sentence(line, logic_tokens):
     i = 0
 
-    for word in line.split(" "):
-        # print(f'{word} compared to {logic_tokens[i]} at i = {i}')
-        if word == logic_tokens[i]:
+    for token in logic_tokens:
+        if token in line:
             i += 1
-        else:
-            if i > 0:
-                i = 0
-        if i == len(logic_tokens)-1:
-            return True
-        
+
+    if len(logic_tokens) == i:
+        return True
     return False
-            
+        
 
 if __name__ == '__main__':
-    database_answer = 'Natalia sold 48/2 = <<48/2=24>>24 clips in May. Natalia sold 48+24 = <<48+24=72>>72 clips altogether in April and May. #### 72'
+    database_answer = 'Maila read 12 x 2 = <<12*2=24>>24 pages today. So she was able to read a total of 12 + 24 = <<12+24=36>>36 pages since yesterday. There are 120 - 36 = <<120-36=84>>84 pages left to be read. Since she wants to read half of the remaining pages tomorrow, then she should read 84/2 = <<84/2=42>>42 pages. #### 42'
+    
+    final_answer = database_answer.split()[-1]
+    
+    
+    # database_answer = 'In a week, Jen works for 7.5 hours/day x 6 days = <<7.56=45>>45 hours/week So in a month, she works for 45 hours/week x 4 weeks =<<454=180>>180 hours. 180 hours of work is equal to 180 hours x $1.5 = $<<180*1.5=270>>270. Since she has complete attendance, she will receive a total of $270 + $10 = $<<270+10=280>>280. #### 280'
     
     # The way I got the answer was <Question> + <Instruction>
     # Where the instruction appended was 'solve this mathematical equation. leave the final answer on the last line. do not store numbers in variables'
     llm_answer_file = 'test answer.txt'
+    # llm_answer_file = 'qna/a1.txt'
     
     score = 0
     
@@ -67,11 +66,15 @@ if __name__ == '__main__':
     
     for l in logic:
         tokenised_logic_sentences.append(tokenise_logic(l))
+    print(tokenised_logic_sentences)
+    
+    total_score = 1 + len(tokenised_logic_sentences)
 
     with open(llm_answer_file, 'r') as f:
         for line in f:
             for sentence in tokenised_logic_sentences:
                 if check_logic_sentence(line, sentence):
+                    tokenised_logic_sentences.pop(tokenised_logic_sentences.index(sentence))
                     score += 1
                     break
         last_line = line
@@ -82,6 +85,7 @@ if __name__ == '__main__':
         except:
             pass
         
-    score += check_answer(num_answer, last_line)
+    score += check_answer(final_answer, num_answer)
     print(score)
+    print(score/total_score)
     
