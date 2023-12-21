@@ -1,6 +1,7 @@
 """
 OpenDI HyperCycle Hackathon 2023
 Challenge 3: Genetic Algorithm for Automated Prompt Engineering
+Made by: Quantum Syntax
 """
 import os
 
@@ -14,12 +15,12 @@ from prompt_objective import PromptObjective
 
 PORT = os.environ.get("PORT", 4002)
 
-class GeneticExample(SimpleServer):
-    manifest = {"name": "GeneticExample",
-                "short_name": "gen-example",
+class MathWiz(SimpleServer):
+    manifest = {"name": "MathWiz",
+                "short_name": "MathWiz",
                 "version": "0.1",
-                "license": "MIT",
-                "author": "HyperCycle"
+                "license": "Apache 2.0",
+                "author": "Quantum Syntax"
                 }
 
     def __init__(self):
@@ -30,31 +31,21 @@ class GeneticExample(SimpleServer):
                  "input_query": "",
                  "input_headers": "",
                  "output": {},
-                 "documentation": "Returns the prompt and the score based on the desired output", # REPLACE
+                 "documentation": "Returns the best prompt based on the desired output", 
                  "example_calls": [{
-                     "body": {"target_output": "simple, lively, strong"},
+                     "body": {"question": "Jimmy has 3 apples. If susan gives him 2 apples, how many apples does he have now?"},
                      "method": "POST",
                      "query": "",
                      "headers": "",
-                     "output": {"prompt": "simple, lively, strong"}
+                     "output": {"prompt": "Solve the problem, thinking logically step by step"}
                  }]
              })
     async def prompt(self, request):
 
-        # REPLACE WITH OUR OWN FUNCTION
-        # define the total iterations
-        n_iter = 100
-        # bits
-        n_bits = 20
-        # define the population size
-        n_pop = 100
-        # crossover rate
-        r_cross = 0.9
-        # mutation rate
-        r_mut = 1.0 / float(n_bits)
-
+        # Replace with our own function here
         request_json = await request.json()
-        target_output = request_json['target_output']
+
+        question = request_json['question']
         pa = PromptObjective(n_bits, target_output)
 
         # perform the genetic algorithm search
@@ -71,7 +62,7 @@ class GeneticExample(SimpleServer):
 
 def main():
     # example usage:
-    app = GeneticExample()
+    app = MathWiz()
     app.run(uvicorn_kwargs={"port": PORT, "host": "0.0.0.0"})
 
 
