@@ -4,16 +4,20 @@ Challenge 3: Genetic Algorithm for Automated Prompt Engineering
 Made by: Quantum Syntax
 """
 import os
-
+from huggingface_hub import hf_hub_download
 
 #-e git+https://github.com/hypercycle-development/pyhypercycle-aim.git#egg=pyhypercycle_aim
 
 from pyhypercycle_aim import SimpleServer, JSONResponseCORS, aim_uri
 
-from genetic_algorithm import GeneticAlgorithm
-from prompt_objective import PromptObjective
+from ga import llamathwiz
 
 PORT = os.environ.get("PORT", 4002)
+
+
+model_name = "TheBloke/Llama-2-7B-Chat-GGUF"
+model_basename = "./1lama-2-7b-chat.05_K_M…gguf"
+model_path = hf_hub_download(repo_id=model_name, filename=model_basename)
 
 class MathWiz(SimpleServer):
     manifest = {"name": "MathWiz",
@@ -24,7 +28,7 @@ class MathWiz(SimpleServer):
                 }
 
     def __init__(self):
-        pass
+        self.llama_wizard = llamathwiz(model_path=model_path)
 
     @aim_uri(uri="/prompt", methods=["POST"],
              endpoint_manifest={
@@ -41,23 +45,14 @@ class MathWiz(SimpleServer):
                  }]
              })
     async def prompt(self, request):
-
-        # Replace with our own function here
         request_json = await request.json()
+        target_output = request_json['target_output']
 
-        question = request_json['question']
-        pa = PromptObjective(n_bits, target_output)
+        best_prompt, best_score = self.llama_wizard.run_ga(target_output, 3)
 
-        # perform the genetic algorithm search
-        best_genotype, score = GeneticAlgorithm.genetic_algorithm(pa.objective,
-                                                                  n_bits,
-                                                                  n_iter,
-                                                                  n_pop,
-                                                                  r_cross,
-                                                                  r_mut)
-        best = pa.phenotype(best_genotype)
-        #REPLACE
-        return JSONResponseCORS({"prompt": best, "score": score})
+        # Format the response
+        return JSONResponseCORS({"prompt": best_prompt, "score": best_score})
+
 
 
 def main():
