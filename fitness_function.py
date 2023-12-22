@@ -4,13 +4,10 @@ import re
 def check_answer(answer, output):
     if not (isinstance(answer, str) and isinstance(output, str)):
         raise TypeError("Must be of type str")
-    # if re.search("\s" + answer +"\s*", output):
-    #     print("answer is correct")
-    #     return 1
-    # print("answer is wrong")
-    # return 0
-    if answer == output:
-        return 1
+    if re.search("\s" + answer +"\s*", output):
+        print("answer is correct")
+        return 10
+    print("answer is wrong")
     return 0
 
 def get_logic(answer):
