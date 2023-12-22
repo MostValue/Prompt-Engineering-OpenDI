@@ -15,9 +15,9 @@ from ga import llamathwiz
 PORT = os.environ.get("PORT", 4002)
 
 
-model_name = "TheBloke/Llama-2-7B-Chat-GGUF"
-model_basename = "./1lama-2-7b-chat.05_K_M…gguf"
-model_path = hf_hub_download(repo_id=model_name, filename=model_basename)
+# model_name = "TheBloke/Llama-2-7B-Chat-GGUF"
+# model_basename = "./1lama-2-7b-chat.05_K_M…gguf"
+# model_path = hf_hub_download(repo_id=model_name, filename=model_basename)
 
 class MathWiz(SimpleServer):
     manifest = {"name": "MathWiz",
@@ -48,7 +48,7 @@ class MathWiz(SimpleServer):
         request_json = await request.json()
         target_output = request_json['target_output']
 
-        best_prompt, best_score = self.llama_wizard.run_ga(target_output, 3)
+        best_prompt, best_score = self.llama_wizard.run_ga(target_output, 2)
 
         # Format the response
         return JSONResponseCORS({"prompt": best_prompt, "score": best_score})
@@ -62,4 +62,9 @@ def main():
 
 
 if __name__ == '__main__':
+    model_name = "TheBloke/Llama-2-7B-Chat-GGUF"
+    model_basename = "./llama-2-7b-chat.Q5_K_M.gguf"
+    
+    model_path = hf_hub_download(repo_id=model_name, filename=model_basename)
+
     main()

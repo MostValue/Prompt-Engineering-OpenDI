@@ -61,7 +61,7 @@ class llamathwiz:
             n_gpu_layers=32
             )
         
-    def run_ga(self, prompt, iterations=5):
+    def run_ga(self, prompt, iterations=2):
         self.scores_avg = []
         self.gens = []
         self.best_instr_per_gen = []
@@ -85,6 +85,18 @@ class llamathwiz:
     
     def average(self, lst): 
         return sum(lst) / len(lst)
+    
+    def get_random_mutation_txt(self, txt_file_path):
+        with open(txt_file_path, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+
+        # Remove any leading/trailing whitespace and filter out empty lines
+        prompts = [line.strip() for line in lines if line.strip()]
+        
+        if prompts:
+            return random.choice(prompts)
+        else:
+            return "No mutation prompts found."
         
     def generate_instructions(self, question, task_description, max_tokens=100):
         formatted_input = f"{task_description} {question}"
@@ -141,7 +153,7 @@ class llamathwiz:
         score += check_answer(final_answer.strip(), num_answer.strip())
         return score/total_score
     
-    def iteration_first(self, num_instructions=10):
+    def iteration_first(self, num_instructions=4):
         self.gen = 1
         self.generated_prompts = []
         self.generated_answers = []
@@ -149,7 +161,7 @@ class llamathwiz:
         self.scores = []
         self.best_instructions = []
         
-        mutation_prompt = get_random_mutation_txt("./Prompt-Engineering-OpenDI/mutation_prompts.txt")
+        mutation_prompt = self.get_random_mutation_txt("mutation_prompts.txt")
         for _ in range(num_instructions):
             question, database_answer = get_random_test_object(self.dataset)  # Fetch a random question from your dataset
             self.iteration_questions.append((question, database_answer))
@@ -169,7 +181,7 @@ class llamathwiz:
         self.iteration_questions = []
         self.scores = []
 
-        mutation_prompt = get_random_mutation_txt("./Prompt-Engineering-OpenDI/mutation_prompts.txt")
+        mutation_prompt = self.get_random_mutation_txt("mutation_prompts.txt")
         for instruction in self.best_instructions:
             question, database_answer = get_random_test_object(self.dataset)  # Fetch a random question from your dataset
             self.iteration_questions.append((question, database_answer))
@@ -187,7 +199,7 @@ class llamathwiz:
         for instr in self.generate_instructions1(4):
             self.best_instructions.append(instr)
         for i in range(2):
-            mutation_prompt = get_random_mutation_txt("./Prompt-Engineering-OpenDI/mutation_prompts.txt")
+            mutation_prompt = self.get_random_mutation_txt("mutation_prompts.txt")
             self.best_instructions.append(self.apply_mutation(self.best_instructions[i], mutation_prompt))
         
     def find_best_scores(self, scores):
@@ -247,6 +259,9 @@ class llamathwiz:
         "VERB": "verb".
         """
         nlp = spacy.load("en_core_web_sm")
+        string1 = " ".join(string1) if isinstance(string1, list) else string1
+        string2 = " ".join(string2) if isinstance(string2, list) else string2
+
         doc1 = nlp(string1)
         doc2 = nlp(string2)
 
