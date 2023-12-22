@@ -141,7 +141,7 @@ class llamathwiz:
         score += check_answer(final_answer.strip(), num_answer.strip())
         return score/total_score
     
-    def iteration_first(self, num_instructions=3):
+    def iteration_first(self, num_instructions=10):
         self.gen = 1
         self.generated_prompts = []
         self.generated_answers = []
